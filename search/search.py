@@ -88,28 +88,31 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     
-    startState = problem.getStartState()
-    if problem.isGoalState(startState):
-        return []
+    frontier = util.Stack()  # Use a Stack for DFS
+    explored = set()         # Set to track visited states
 
-    frontier = util.Stack()
-    frontier.push((startState, []))
-    explored = set()
+    # Push the start state with an empty path
+    start_state = problem.getStartState()
+    frontier.push((start_state, []))
 
     while not frontier.isEmpty():
-        state, actions = frontier.pop()
+        currState, currPath = frontier.pop()
 
-        if problem.isGoalState(state):
-            return actions
+        # Check if it's a goal state
+        if problem.isGoalState(currState):
+            return currPath
 
-        if state not in explored:
-            explored.add(state)
-            for successor, action, stepCost in problem.getSuccessors(state):
-                if successor not in explored:
-                    newActions = actions + [action]
-                    frontier.push((successor, newActions))
+        # Process the state only if it hasn't been explored
+        if currState not in explored:
+            explored.add(currState)
 
-    return []  # util.raiseNotDefined()
+            # Add all successors to the frontier
+            for nextState, action, cost in problem.getSuccessors(currState):
+                if nextState not in explored:
+                    frontier.push((nextState, currPath + [action]))
+
+    return []  # Return an empty path if no solution is found
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
